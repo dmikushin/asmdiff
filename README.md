@@ -1,5 +1,5 @@
-asmdiff
-=======
+# asmdiff
+
 This is a tool for comparing the output of "objdump" for a before/after
 pair of .o files.
 
@@ -19,3 +19,11 @@ following ways:
     .text section doesn't show up as a difference.
 
   * Trailing nop instructions (for padding) are ignored
+
+
+## Installation
+
+```
+pip install git+https://github.com/dmikushin/asmdiff
+```
+

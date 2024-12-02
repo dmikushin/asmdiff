@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #   Copyright 2013, 2015, 2023 David Malcolm <dmalcolm@redhat.com>
 #   Copyright 2013, 2015, 2023 Red Hat, Inc.
+#   Copyright 2024 Dmitry Mikushin
 #
 #   This library is free software; you can redistribute it and/or
 #   modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,7 @@ from collections import OrderedDict
 from subprocess import Popen, PIPE
 import re
 import sys
+from argparse import ArgumentParser
 
 class Demangler:
     def __init__(self):
@@ -393,7 +395,15 @@ def read_objdump(path):
     with open(path) as f:
         return ObjDump(f)
 
-if __name__ == '__main__':
-    old = read_objdump(sys.argv[1])
-    new = read_objdump(sys.argv[2])
+def main():
+    parser = ArgumentParser(description='Compare objdump outputs for two .o files.')
+    parser.add_argument('old_obj', help='Path to the old object file')
+    parser.add_argument('new_obj', help='Path to the new object file')
+    args = parser.parse_args()
+
+    old = read_objdump(args.old_obj)
+    new = read_objdump(args.new_obj)
     asm_diff(old, new, Output(sys.stdout), just_sizes=False)
+
+if __name__ == '__main__':
+    main()
