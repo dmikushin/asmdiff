@@ -285,7 +285,8 @@ def fn_diff(old, new, out, just_sizes):
     #    handle_minor_changes()
     #    return
 
-    out.writeln('Changed function: %s' % old.demangled)
+    out.writeln('--- a/%s' % old.demangled)
+    out.writeln('+++ b/%s' % old.demangled)
     handle_minor_changes()
 
     with out.indent():
@@ -392,13 +393,14 @@ def asm_diff(old, new, out, just_sizes):
     out.writeln(f'{added} functions added, {removed} functions removed, {changed} functions changed')
     out.writeln(f'{insertions} insertions(+), {deletions} deletions(-)')
 
-    with out.indent():
-        for gone in peers.gone:
-            out.writeln('Function removed: %s' % gone)
-        for appeared in peers.appeared:
-            out.writeln('Function added: %s' % appeared)
-        for oldfn, newfn in peers.old_to_new.items():
-            fn_diff(oldfn, newfn, out, just_sizes)
+    for gone in peers.gone:
+        out.writeln('--- a/%s' % gone)
+        out.writeln('+++ /dev/null')
+    for appeared in peers.appeared:
+        out.writeln('--- /dev/null')
+        out.writeln('+++ b/%s' % appeared)
+    for oldfn, newfn in peers.old_to_new.items():
+        fn_diff(oldfn, newfn, out, just_sizes)
 
 class Output:
     def __init__(self, fileobj):
