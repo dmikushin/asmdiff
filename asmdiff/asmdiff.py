@@ -368,7 +368,30 @@ class FunctionMatchupSet(MatchupSet):
 def asm_diff(old, new, out, just_sizes):
     out.writeln('Old: %s' % old.objpath)
     out.writeln('New: %s' % new.objpath)
+
     peers = FunctionMatchupSet(old, new)
+
+    added, removed, changed = 0, 0, 0
+    insertions, deletions = 0, 0
+
+    with out.indent():
+        for gone in peers.gone:
+            removed += 1
+            deletions += len(gone.instrs)
+        for appeared in peers.appeared:
+            added += 1
+            insertions += len(appeared.instrs)
+        for oldfn, newfn in peers.old_to_new.items():
+            if not fn_equal(oldfn, newfn):
+                changed += 1
+                insertions += len(newfn.instrs) - len(oldfn.instrs)
+                deletions += len(oldfn.instrs) - len(newfn.instrs)
+
+    # Print summary in patch header format
+    out.writeln('---')
+    out.writeln(f'{added} functions added, {removed} functions removed, {changed} functions changed')
+    out.writeln(f'{insertions} insertions(+), {deletions} deletions(-)')
+
     with out.indent():
         for gone in peers.gone:
             out.writeln('Function removed: %s' % gone)
