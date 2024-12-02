@@ -280,21 +280,28 @@ def fn_diff(old, new, out, just_sizes):
                 out.writeln('  (renamed to %s)' % new.demangled)
         return
 
-    if fn_equal(old, new):
-        out.writeln('Unchanged function: %s' % old.demangled)
-        handle_minor_changes()
-        return
+    #if fn_equal(old, new):
+    #    out.writeln('Unchanged function: %s' % old.demangled)
+    #    handle_minor_changes()
+    #    return
 
     out.writeln('Changed function: %s' % old.demangled)
     handle_minor_changes()
 
     with out.indent():
+        has_changes = False
         for oldinstr, newinstr in zip(old.instrs, new.instrs):
-            if oldinstr.disasm == newinstr.disasm:
-                out.writeln('FN+%04s: %s' % (HexInt(oldinstr.offset - old.offset), oldinstr.disasm))
-            else:
-                out.writeln('FN+%04s: Old: %s' % (HexInt(oldinstr.offset - old.offset), oldinstr.disasm))
-                out.writeln('       : New: %s' % (newinstr.disasm, ))
+            if oldinstr.disasm != newinstr.disasm:
+                has_changes = True
+                break
+
+        if has_changes:
+            for oldinstr, newinstr in zip(old.instrs, new.instrs):
+                if oldinstr.disasm == newinstr.disasm:
+                    out.writeln('FN+%04s: %s' % (HexInt(oldinstr.offset - old.offset), oldinstr.disasm))
+                else:
+                    out.writeln('FN+%04s: Old: %s' % (HexInt(oldinstr.offset - old.offset), oldinstr.disasm))
+                    out.writeln('       : New: %s' % (newinstr.disasm, ))
 
 class Peer:
     """
