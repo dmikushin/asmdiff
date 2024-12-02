@@ -153,14 +153,14 @@ class ObjDump(AsmFile):
     """
     @classmethod
     def fixup_disasm(cls, disasm, rawfuncname, demangler):
-        # Fixup jump offsets to refer to "THIS_FN" (to minimize changes due
+        # Fixup jump offsets to refer to "FN" (to minimize changes due
         # to function renaming)
         m = re.match(r'.*\s([0-9a-f]+ \<.+\+0x[0-9a-f]+\>)', disasm)
         if m:
             m2 = re.match(r'[0-9a-f]+ \<(.+)\+(0x[0-9a-f]+)\>',
                           m.group(1))
             if m2.group(1) == rawfuncname:
-                disasm = disasm[:m.start(1)] + 'THIS_FN+' + m2.group(2) + disasm[m.end(1):]
+                disasm = disasm[:m.start(1)] + 'FN+' + m2.group(2) + disasm[m.end(1):]
 
         # Fixup jumps to other functions by removing the offset within the
         # section, and demangling
