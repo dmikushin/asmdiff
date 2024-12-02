@@ -78,7 +78,7 @@ class Function:
         self.size = 0
 
     def __repr__(self):
-        return 'Function(%r)' % self.demangled
+        return self.demangled
 
     def __hash__(self):
         return hash(self.rawname)
